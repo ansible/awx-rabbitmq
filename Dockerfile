@@ -2,7 +2,10 @@ FROM alpine:latest
 
 ADD launch.sh /launch.sh
 
-ENV RABBITMQ_VERSION="3.6.12"
+ARG RABBITMQ_VERSION
+ENV RABBITMQ_DEFAULT_USER="awx"
+ENV RABBITMQ_DEFAULT_PASS="abcdefg"
+ENV RABBITMQ_DEFAULT_VHOST="awx"
 ENV ERL_EPMD_PORT="4369"
 ENV AUTOCLUSTER_VERSION="0.8.0"
 ENV RABBITMQ_LOGS="-"
@@ -11,6 +14,7 @@ ENV RABBITMQ_DIST_PORT="25672"
 ENV RABBITMQ_SERVER_ERL_ARGS="+K true +A128 +P 1048576 -kernel inet_default_connect_options [{nodelay,true}]"
 ENV RABBITMQ_MNESIA_DIR="/var/lib/rabbitmq/mnesia"
 ENV RABBITMQ_PID_FILE="/var/lib/rabbitmq/rabbitmq.pid"
+ENV RABBITMQ_ROOT="/usr/lib/rabbitmq"
 ENV RABBITMQ_PLUGINS_DIR="/usr/lib/rabbitmq/plugins"
 ENV RABBITMQ_PLUGINS_EXPAND_DIR="/var/lib/rabbitmq/plugins"
 ENV HOME="/var/lib/rabbitmq"
@@ -30,13 +34,14 @@ RUN apk --update add coreutils curl xz erlang erlang-asn1 erlang-crypto erlang-e
 # chown rabbitmq /var/lib/rabbitmq/.erlang.cookie &&
 # chmod 0600 /var/lib/rabbitmq/.erlang.cookie /root/.erlang.cookie &&
 RUN adduser -D -u 1000 -h $HOME rabbitmq rabbitmq && \
-    chown -R rabbitmq /usr/lib/rabbitmq /var/lib/rabbitmq && \
+    chown -R rabbitmq $RABBITMQ_ROOT $HOME && \
     sync && \
-    /usr/lib/rabbitmq/sbin/rabbitmq-plugins --offline enable     rabbitmq_management     rabbitmq_consistent_hash_exchange     rabbitmq_federation     rabbitmq_federation_management     rabbitmq_mqtt     rabbitmq_shovel     rabbitmq_shovel_management     rabbitmq_stomp     rabbitmq_web_stomp     autocluster && \
-    chown -R rabbitmq /usr/lib/rabbitmq /var/lib/rabbitmq && \
-    rm -rf /var/lib/rabbitmq/.erlang.cookie && \
-    mkdir -p /etc/rabbitmq/ && \
-    chmod g+w /etc/passwd && chmod a+rw /var/lib/rabbitmq && chmod a+rw /etc/rabbitmq
+    $RABBITMQ_ROOT/sbin/rabbitmq-plugins --offline enable     rabbitmq_management     rabbitmq_consistent_hash_exchange     rabbitmq_federation     rabbitmq_federation_management     rabbitmq_mqtt     rabbitmq_shovel     rabbitmq_shovel_management     rabbitmq_stomp     rabbitmq_web_stomp     autocluster && \
+    chown -R rabbitmq $RABBITMQ_ROOT $HOME && \
+    rm -rf $HOME/.erlang.cookie && \
+    mkdir -p $RABBITMQ_ROOT/etc/rabbitmq/ && \
+    chown -R rabbitmq $RABBITMQ_ROOT && \
+    chmod g+w /etc/passwd && chmod a+rw $HOME && chmod a+rw $RABBITMQ_ROOT/etc/rabbitmq
 ADD .erlang.cookie /.erlang.cookie
 VOLUME /var/lib/rabbitmq
 EXPOSE 15672/tcp 25672/tcp 4369/tcp 5671/tcp 5672/tcp
