@@ -11,7 +11,7 @@ if [ `id -u` -ge 500 ]; then
     chmod 0600 $HOME/.erlang.cookie
 fi
 
-cat <<EOF > $RABBITMQ_ROOT/etc/rabbitmq/rabbitmq.config
+cat <<EOF > /etc/rabbitmq/rabbitmq.config
 %% -*- mode: erlang -*-
 [ {rabbit,
    [

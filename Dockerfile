@@ -12,6 +12,7 @@ ENV RABBITMQ_LOGS="-"
 ENV RABBITMQ_SASL_LOGS="-"
 ENV RABBITMQ_DIST_PORT="25672"
 ENV RABBITMQ_SERVER_ERL_ARGS="+K true +A128 +P 1048576 -kernel inet_default_connect_options [{nodelay,true}]"
+ENV RABBITMQ_CONFIG_FILE="/etc/rabbitmq/rabbitmq"
 ENV RABBITMQ_MNESIA_DIR="/var/lib/rabbitmq/mnesia"
 ENV RABBITMQ_PID_FILE="/var/lib/rabbitmq/rabbitmq.pid"
 ENV RABBITMQ_ROOT="/usr/lib/rabbitmq"
@@ -37,11 +38,11 @@ RUN adduser -D -u 1000 -h $HOME rabbitmq rabbitmq && \
     chown -R rabbitmq $RABBITMQ_ROOT $HOME && \
     sync && \
     $RABBITMQ_ROOT/sbin/rabbitmq-plugins --offline enable     rabbitmq_management     rabbitmq_consistent_hash_exchange     rabbitmq_federation     rabbitmq_federation_management     rabbitmq_mqtt     rabbitmq_shovel     rabbitmq_shovel_management     rabbitmq_stomp     rabbitmq_web_stomp     autocluster && \
-    chown -R rabbitmq $RABBITMQ_ROOT $HOME && \
+    mkdir /etc/rabbitmq && \
+    touch /etc/rabbitmq/rabbitmq.config && \
+    chown -R rabbitmq $RABBITMQ_ROOT $HOME /etc/rabbitmq && \
     rm -rf $HOME/.erlang.cookie && \
-    mkdir -p $RABBITMQ_ROOT/etc/rabbitmq/ && \
-    chown -R rabbitmq $RABBITMQ_ROOT && \
-    chmod g+w /etc/passwd && chmod a+rw $HOME && chmod a+rw $RABBITMQ_ROOT/etc/rabbitmq
+    chmod g+w /etc/passwd && chmod a+rw $HOME && chmod g+w -R /etc/rabbitmq
 ADD .erlang.cookie /.erlang.cookie
 VOLUME /var/lib/rabbitmq
 EXPOSE 15672/tcp 25672/tcp 4369/tcp 5671/tcp 5672/tcp
