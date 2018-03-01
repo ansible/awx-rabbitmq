@@ -3,13 +3,15 @@
 [[ -n "$DEBUG" ]] && set -x
 set -e
 
+
 if [ `id -u` -ge 500 ]; then
     echo "rabbitmq:x:`id -u`:`id -g`:,,,:${HOME}:/bin/ash" >> /tmp/passwd
     cat /tmp/passwd > /etc/passwd
     rm /tmp/passwd
-    cp /.erlang.cookie $HOME/.erlang.cookie
-    chmod 0600 $HOME/.erlang.cookie
 fi
+
+echo "$RABBITMQ_ERLANG_COOKIE" > $HOME/.erlang.cookie
+chmod 0600 $HOME/.erlang.cookie
 
 cat <<EOF > /etc/rabbitmq/rabbitmq.config
 %% -*- mode: erlang -*-

@@ -1,11 +1,10 @@
 FROM alpine:latest
 
-ADD launch.sh /launch.sh
-
 ARG RABBITMQ_VERSION
 ENV RABBITMQ_DEFAULT_USER="awx"
 ENV RABBITMQ_DEFAULT_PASS="abcdefg"
 ENV RABBITMQ_DEFAULT_VHOST="awx"
+ENV RABBITMQ_ERLANG_COOKIE="cookiemonster"
 ENV ERL_EPMD_PORT="4369"
 ENV AUTOCLUSTER_VERSION="0.8.0"
 ENV RABBITMQ_LOGS="-"
@@ -41,9 +40,8 @@ RUN adduser -D -u 1000 -h $HOME rabbitmq rabbitmq && \
     mkdir /etc/rabbitmq && \
     touch /etc/rabbitmq/rabbitmq.config && \
     chown -R rabbitmq $RABBITMQ_ROOT $HOME /etc/rabbitmq && \
-    rm -rf $HOME/.erlang.cookie && \
     chmod g+w /etc/passwd && chmod a+rw $HOME && chmod g+w -R /etc/rabbitmq
-ADD .erlang.cookie /.erlang.cookie
+ADD launch.sh /launch.sh
 VOLUME /var/lib/rabbitmq
 EXPOSE 15672/tcp 25672/tcp 4369/tcp 5671/tcp 5672/tcp
 CMD /launch.sh
