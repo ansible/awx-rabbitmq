@@ -4,8 +4,8 @@ FROM rabbitmq:${RABBITMQ_VERSION}-management-alpine
 ENV RABBITMQ_ERLANG_COOKIE="cookiemonster"
 
 RUN chgrp -R root /var/lib/rabbitmq /var/log/rabbitmq /etc/rabbitmq
-RUN chmod g+w /etc/passwd
-RUN chmod -R g+rwx /var/lib/rabbitmq /var/log/rabbitmq /etc/rabbitmq
+RUN chmod g+w /etc/passwd &&\
+    chmod -R g+rwx /var/lib/rabbitmq /var/log/rabbitmq /etc/rabbitmq
 
 ADD launch.sh /launch.sh
 VOLUME /var/lib/rabbitmq
