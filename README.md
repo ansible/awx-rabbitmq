@@ -1,7 +1,7 @@
 # RabbitMQ
 
 
-This is arepo for creating a Docker image of [RabbitMQ](https://www.rabbitmq.com) that supports autoscaling.       
+This is a repo for creating a Docker image of [RabbitMQ](https://www.rabbitmq.com) that supports autoscaling.       
 
 ## What is it?
 
