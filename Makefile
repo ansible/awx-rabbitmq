@@ -1,5 +1,5 @@
 .PHONY: docker-build
-RABBITMQ_VERSION=3.7.4
+RABBITMQ_VERSION=3.7.15
 
 all: docker-build
 
