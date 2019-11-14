@@ -12,4 +12,8 @@ fi
 echo "$RABBITMQ_ERLANG_COOKIE" > $HOME/.erlang.cookie
 chmod 0600 $HOME/.erlang.cookie
 
+if [ "$RABBITMQ_NODENAME" ]; then
+    if [ -d "/var/lib/rabbitmq/mnesia/\${RABBITMQ_NODENAME}" ]; then rabbitmqctl force_boot; fi
+fi
+
 docker-entrypoint.sh rabbitmq-server
